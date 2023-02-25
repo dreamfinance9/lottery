@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DREAM FINANCE LOTTERY</title>
+        <link rel="stylesheet" href="css/reset.css" type="text/css">
+        <link rel="stylesheet" href="css/main.css" type="text/css">
+        <link rel="stylesheet" href="css/ios_fullscreen.css" type="text/css">
+        <link rel='shortcut icon' type='image/x-icon' href='./favicon.ico' />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,minimal-ui" />
+        <meta name="msapplication-tap-highlight" content="no"/>
+
+        <script type="text/javascript" src="js/lib/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="js/lib/createjs.min.js"></script>
+        <script type="text/javascript" src="js/lib/howler.min.js"></script>
+        <script type="text/javascript" src="js/lib/Three.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>  
+        <script type="text/javascript" src="js/main.js"></script>
+        
+        <script type="text/javascript">
+        window.addEventListener('load', async() => {
+
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    await ethereum.enable();
+                } catch (err) {
+                    $('#status').html('Please Login', err)
+                }
+            } else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider)
+            } else {
+                $('#status').html('No Metamask (or other Web3 Provider) installed')
+            }
+            
+            window.web3 = new Web3(ethereum);
+                    
+            LOTTERY_ABI = [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_fee",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_fifth",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_first",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_fourth",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_second",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_seventh",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_sixth",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "new_price",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "change_third",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [],
+                "name": "destroy",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [],
+                "name": "initialize",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [],
+                "name": "participate",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "plug_df",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [],
+                "name": "redeem_item",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "newOwner",
+                        "type": "address"
+                    }
+                ],
+                "name": "transferOwnership",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "name": "_tokenAddrA",
+                        "type": "address"
+                    },
+                    {
+                        "name": "_tokenAddrB",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "fallback"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Transfer",
+                "type": "event"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "ad",
+                        "type": "address"
+                    }
+                ],
+                "name": "check_prize",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "ad",
+                        "type": "address"
+                    }
+                ],
+                "name": "check_ticket",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "ContractsAdresses",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "FIFTH_WINNER",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "FIFTHZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "FIRST_WINNER",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "FIRSTZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "FOURTH_WINNER",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "FOURTHZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "initialized",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "PARTFEE",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "SECOND_WINNER",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "SECONDZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "SEVEN_ITEM",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "SEVENZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "SIX_ITEM",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "SIXTHZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "THIRD_WINNER",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "THIRDZ",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "userlist",
+                "outputs": [
+                    {
+                        "name": "ticket_num",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+
+            let lottery_contract = new web3.eth.Contract(LOTTERY_ABI, "0x1fe8C079810d4514f946AF03FA2E7Ce76086a3b2");
+            let prize_rank = await lottery_contract.methods.check_prize(web3.currentProvider.selectedAddress).call(); 
+            console.log("PRIZE_check");
+            console.log(prize_rank);
+
+        })
+    
+    </script>
+        
+    </head>
+    <body ondragstart="return false;" ondrop="return false;" >
+        <div style="position: fixed; background-color: transparent; top: 0px; left: 0px; width: 100%; height: 100%"></div>
+        <script>
+            $(document).ready(function () {
+                var oMain = new CMain({
+                    fullscreen:true,                //SET THIS TO FALSE IF YOU DON'T WANT TO SHOW FULLSCREEN BUTTON
+                    audio_enable_on_startup:false,  //ENABLE/DISABLE AUDIO WHEN GAME STARTS 
+                    show_credits:true,              //ENABLE/DISABLE INFO CREDITS BUTTON
+
+                    //PAYTABLE_SETTINGS: IN THIS FIELD YOU CAN SET THE OCCURRENCE OF EACH PRIZE BASED ON THE NUMBER OF BALLS GUESSED BY THE PLAYER
+                        //      -num_balls_matched: NUMBER OF BALLS GUESSED BY THE PLAYER
+                        //      -prize_img_url: THE IMAGE OF THE PRIZE FOR THAT COMBINATION OF GUESSED BALLS. 
+                        //                      IF YOU DON'T WANT ANY WIN FOR THAT COMBINATION, PLEASE LEAVE THE FIELD EMPTY (e.g. prize_img_url: "")
+                        //      -win_occurrence:    THE WIN OCCURRENCE OF THAT PRIZE. THE NUMBER IS BASED ON 100 DRAWS. 
+                        //                          THE SUM OF ALL WIN OCCURENCES SHOULD NOT BE HIGHER THEN 100.
+                        //      -label: INSERT A DESCRIPTION OF THE OBJECT. IF YOU DON'T WANT TO ADD ANY LABEL, LEAVE THE FIELD AS IT IS.
+                        //      -redeemlink:    INSERT A REDEEM LINK FOR THE OBJECT. IF YOU DON'T WANT TO ADD ANY LINK, LEAVE THE FIELD AS IT IS: (redeemlink: "").
+                        //                      YOU CAN ALSO ADD A LINK FOR NO PRIZE WINNING
+                    paytable_settings:[
+                        {num_balls_matched: 8, prize_img_url: "./sprites/item_prize_images/image_5.png", win_occurrence: prize_rank, label: "① GOLD PEGA", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 7, prize_img_url: "./sprites/item_prize_images/image_3.png", win_occurrence:0, label: "② SPECIAL PEGA", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 6, prize_img_url: "./sprites/item_prize_images/image_4.png", win_occurrence:0, label: "③ NORMAL PEGA", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 5, prize_img_url: "./sprites/item_prize_images/image_0.png", win_occurrence:0, label: "④ 1000 USDT", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 4, prize_img_url: "./sprites/item_prize_images/image_1.png", win_occurrence:0, label: "⑤ 500 USDT", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 3, prize_img_url: "./sprites/item_prize_images/image_2.png", win_occurrence:0, label: "⑥ 100 DF", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 2, prize_img_url: "./sprites/item_prize_images/image_2.png", win_occurrence:100, label: "⑦ LOST", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 1, prize_img_url: "./sprites/item_prize_images/image_2.png", win_occurrence:0, label: "⑧ LOST", redeem_link: "https://dream1.finance"},
+                        {num_balls_matched: 0, prize_img_url: "./sprites/item_prize_images/lose.png", win_occurrence:0, label: "⑨ LOST", redeem_link: "https://dream1.finance"}
+                    ]
+                    
+                });
+                
+                $(oMain).on("start_session", function (evt) {
+                    if (getParamValue('ctl-arcade') === "true") {
+                        parent.__ctlArcadeStartSession();
+                    }
+                });
+
+                $(oMain).on("end_session", function (evt) {
+                    if (getParamValue('ctl-arcade') === "true") {
+                        parent.__ctlArcadeEndSession();
+                        console.log("finish");
+                    }
+                });
+
+                $(oMain).on("save_score", function(evt,iPrizeIndex) {
+                           if(getParamValue('ctl-arcade') === "true"){
+                               parent.__ctlArcadeSaveScore({score:iPrizeIndex});
+                           }
+                           //...ADD YOUR CODE HERE EVENTUALLY
+                    });
+
+                $(oMain).on("show_interlevel_ad", function (evt) {
+                    if (getParamValue('ctl-arcade') === "true") {
+                        parent.__ctlArcadeShowInterlevelAD();
+                    }
+                });
+
+                $(oMain).on("share_event", function (evt, iScore) {
+                    if (getParamValue('ctl-arcade') === "true") {
+                        parent.__ctlArcadeShareEvent({img: TEXT_SHARE_IMAGE,
+                            title: TEXT_SHARE_TITLE,
+                            msg: TEXT_SHARE_MSG1 + iScore + TEXT_SHARE_MSG2,
+                            msg_share: TEXT_SHARE_SHARE1 + iScore + TEXT_SHARE_SHARE1});
+                    }
+                });
+
+
+                if (isIOS()) {
+                    setTimeout(function () {
+                        sizeHandler();
+                    }, 200);
+                } else {
+                    sizeHandler();
+                }
+            });
+
+        </script>
+        
+        <div class="check-fonts">
+            <p class="check-font-1">The oldest references to this extremely common and popular game of chance date back to antiquity. </p>
+            <p class="check-font-2">In the lottery, the probability of every number and thus every lottery sequence is the same. </p>
+        </div> 
+        <canvas id="canvas" class='ani_hack' width="1200" height="1200"> </canvas>
+        <div id="block_game" style="position: fixed; background-color: transparent; top: 0px; left: 0px; width: 100%; height: 100%; display:none"></div>
+    </body>
+</html>
